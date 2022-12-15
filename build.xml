@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="tomcat" default="clean">
+    <property file="build.properties"/>
+
+    <target name="clean" >
+        <delete>
+            <fileset dir="classes" includes="*.class"/>
+            <fileset dir="lib" includes="*.jar"/>
+            <fileset dir="jar" includes="*.jar"/>
+        </delete>
+    </target>
+
+    <target name="libs" depends="clean">
+        <copy toFile="lib/gson-2.8.2.jar">
+            <resources>
+                <url url="https://repo1.maven.org/maven2/com/google/code/gson/gson/2.8.2/gson-2.8.2.jar"/>
+            </resources>
+        </copy>
+        <copy toFile="lib/commons-codec-1.8.jar">
+            <resources>
+                <url url="https://repo1.maven.org/maven2/commons-codec/commons-codec/1.8/commons-codec-1.8.jar"/>
+            </resources>
+        </copy>
+        <copy toFile="lib/javax.servlet-api-3.0.1.jar">
+            <resources>
+                <url url="https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar"/>
+            </resources>
+        </copy>
+        <copy toFile="lib/log4j-api-2.19.0.jar">
+            <resources>
+                <url url="https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.19.0/log4j-api-2.19.0.jar"/>
+            </resources>
+        </copy>
+        <copy toFile="lib/log4j-core-2.19.0.jar">
+            <resources>
+                <url url="https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.19.0/log4j-core-2.19.0.jar"/>
+            </resources>
+        </copy>
+        <copy toFile="lib/mariadb-java-client-3.0.8.jar">
+            <resources>
+                <url url="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/3.0.8/mariadb-java-client-3.0.8.jar"/>
+            </resources>
+        </copy>
+        <copy toFile="lib/mybatis-3.5.11.jar">
+            <resources>
+                <url url="https://repo1.maven.org/maven2/org/mybatis/mybatis/3.5.11/mybatis-3.5.11.jar"/>
+            </resources>
+        </copy>
+    </target>
+
+    <target name="compile" depends="libs">
+        <javac srcdir="src/main/webapp/WEB-INF/src" includeantruntime="false" debug="true" destdir="classes">
+            <classpath>
+                <pathelement path="lib/gson-2.8.2.jar"/>
+                <pathelement path="lib/commons-codec-1.8.jar"/>
+                <pathelement path="lib/javax.servlet-api-3.0.1.jar"/>
+                <pathelement path="lib/log4j-api-2.19.0.jar"/>
+                <pathelement path="lib/log4j-core-2.19.0.jar"/>
+                <pathelement path="lib/mariadb-java-client-3.0.8.jar"/>
+                <pathelement path="lib/mybatis-3.5.11.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="jar/util.jar"
+             basedir="classes">
+        </jar>
+    </target>
+
+    <target name="war" depends="jar">
+        <war destfile="fax.war" webxml="src/main/webapp/WEB-INF/web.xml">
+            <fileset dir = "jar">
+                <include name = "util.jar"/>
+            </fileset>
+            <lib dir="lib"> </lib>
+            <classes dir="classes"/>
+        </war>
+    </target>
+
+    <target name="deploy" depends="war">
+        <copy todir="${deploy.dir}" file="fax.war"/>
+    </target>
+
+    <target name="undeploy">
+        <delete>
+            <fileset dir="C:\java\apache-tomcat-9.0.70\webapps" includes="fax.war"/>
+        </delete>
+    </target>
+
+</project>
